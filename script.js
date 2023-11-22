@@ -1,25 +1,29 @@
-const html_code = document.getElementById("html");
-const css_code = document.getElementById("css");
-const js_code = document.getElementById("js");
-const result = document.getElementById("result");
+let btn = document.getElementById("shorten");
 
-function updateOutput() {
-    // Storing data in Local Storage
-    localStorage.setItem('html_code', html_code.value);
-    localStorage.setItem('css_code', css_code.value);
-    localStorage.setItem('js_code', js_code.value);
+btn.addEventListener('click', short);
 
-    // Executing HTML, CSS & JS code
-    result.contentDocument.body.innerHTML = `<style>${localStorage.css_code}</style>` + localStorage.html_code;
-    result.contentWindow.eval(localStorage.js_code);
+
+async function short(){
+    let oldLink = document.getElementById("oldlink").value;
+    let newLink = document.getElementById("newlink");
+
+    const result = await fetch(`https://api.shrtco.de/v2/shorten?url=${oldLink}`);
+    const data = await result.json();
+
+    newLink.value = data.result.short_link2;
+
+
+
+
+let newURL = document.getElementById("newlink");
+let copyButton = document.getElementById("copy");
+
+
+copyButton.onclick = ()=>{
+    newURL.select();
+
+    window.navigator.clipboard.writeText(newURL.value);
+    document.getElementById("followme").textContent = "made by imlavaraju";
+    document.getElementById("followme").style.color="green";
 }
-
-function clearEditor() {
-    html_code.value = "";
-    css_code.value = "";
-    js_code.value = "";
-    result.contentDocument.body.innerHTML = "";
 }
-
-document.querySelector(".run-btn").addEventListener("click", updateOutput);
-document.querySelector(".clear-btn").addEventListener("click", clearEditor);
